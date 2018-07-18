@@ -2,10 +2,21 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 
+def get_edge_color(g):
+    edges = g.edges()
+    weights = [g.edges[e]['weight'] for e in edges]
+    maxw = max(weights)
+    return [w/maxw for w in weights]
+    
 def draw_graph(g):
     weights = [g[u][v]['weight'] for u, v in g.edges()]
     pos = nx.spring_layout(g)
-    nx.draw(g, node_size=10, width=weights, pos=pos)
+    cmap = plt.cm.get_cmap('Greys')
+    nx.draw(g, 
+            node_size=6, 
+            edge_color = get_edge_color(g), 
+            edge_cmap = cmap,
+            pos=pos)
     plt.savefig("graph.png")
 
 def create_graph():
@@ -23,17 +34,17 @@ def create_graph():
     return g
 
 def random_path(g):
-    n1 = random.sample(range(0, 100), 1)[0]
-    n2 = random.sample(range(100, 200), 1)[0]
+    n1 = random.randint(0, 199)
+    n2 = random.randint(0, 199)
     try:
         path = nx.shortest_path(g, n1, n2)
+        for i in range(0, len(path)-1):
+            g.edges[path[i], path[i+1]]['weight'] += 1
     except:
         pass
-    for i in range(0, len(path)-1):
-        g.edges[path[i], path[i+1]]['weight'] += 1
     return g
 
 g = create_graph()
-for i in range(1, 10):
+for i in range(1, 100):
     g = random_path(g)
 draw_graph(g)
