@@ -1,12 +1,14 @@
 import networkx as nx
 import random
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 def get_edge_color(g):
     edges = g.edges()
     weights = [g.edges[e]['weight'] for e in edges]
     maxw = max(weights)
-    return [w/maxw for w in weights]
+    return [w*2/maxw for w in weights]
     
 def draw_graph(g):
     weights = [g[u][v]['weight'] for u, v in g.edges()]
@@ -45,6 +47,14 @@ def random_path(g):
     return g
 
 g = create_graph()
-for i in range(1, 100):
+for i in range(1, 20):
     g = random_path(g)
 draw_graph(g)
+
+plt.cla()
+plt.clf()
+weights = [g.edges[e]['weight'] for e in g.edges()]
+plt.hist(weights, 30)
+plt.xlabel('weights')
+plt.ylabel('number of edges')
+plt.show()
